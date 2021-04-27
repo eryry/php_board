@@ -32,19 +32,25 @@ session_start();
 function h($str) {
 	return htmlspecialchars($str,ENT_QUOTES);
 }
-if(!empty($_SESSION["u_name"])) {
-    $sub_u_name = h($_SESSION["u_name"]);
-}else{
-    $sub_u_name="";
-}
+// if(!empty($_SESSION["u_name"])) {
+//     $sub_u_name = h($_SESSION["u_name"]);
+// }else{
+//     $sub_u_name="";
+// }
 $sub_time="";
 if(!empty($_SESSION["sub_time"])){
     $sub_time= $_SESSION["sub_time"];
 }
-$u_text="";
-if(!empty($_SESSION["u_text"])){
-    $u_text= h($_SESSION["u_text"]);
+
+if(!empty($_SESSION["err_msg_text"])){
+    $err_msg_text=$_SESSION["err_msg_text"];
 }
+if(!empty($_SESSION["err_msg_name"])){
+    $err_msg_name=$_SESSION["err_msg_name"];
+}
+
+unset($_SESSION["err_msg_text"]);
+unset($_SESSION["err_msg_name"]);
 
 define('FILENAME','./message.txt');
 $message_array=[];
@@ -88,11 +94,13 @@ if($file_handle = fopen(FILENAME,'r')) {
 <section>
 <form action="exec_sub.php" method="post">
     <p><label for="u_name">名前：</label>
-    <input type="text" name="u_name" id="u_name" value="<?php echo $sub_u_name;?>">
+    <input type="text" name="u_name" id="u_name" value="<?php if(!empty($_SESSION['u_name'])){ echo $_SESSION['u_name'];} ?>">
+    <p><?php if(!empty($err_msg_name)){echo $err_msg_name;} ;?></p>
     </p>
     <p><label for="u_text">投稿文：</label>
     <textarea type="text" name="u_text" id="u_text" value=""></textarea>
     </p>
+    <p><?php if(!empty($err_msg_text)){echo $err_msg_text;} ;?></p>
     <input type="submit" name="sub" value="投稿する">
 </form>
 </section>

@@ -5,6 +5,23 @@ if( empty($_POST["sub"]) ) {
 	exit();
 }
 
+session_start();
+// 投稿本文がなかったらだめ
+if(empty($_POST["u_text"])){
+	header("Location:board.php?err02");
+    $_SESSION["err_msg_text"]="必須項目なので投稿文入力ください";
+	exit();
+}
+
+// 名前20文字以上はだめ
+if(mb_strlen($_POST["u_name"]) >= 20){ 
+    $_SESSION["err_msg_name"]="20文字以内で入力ください";
+    // $_SESSION["u_name"]="";
+    header("Location:board.php?err03");
+	exit();
+}
+
+
 define('FILENAME','./message.txt');
 date_default_timezone_set('Asia/Tokyo');
 
@@ -13,7 +30,8 @@ if( $file_handle = fopen(FILENAME, "a")) {
 
     // 書き込み日時を取得
     $now_date = date("Y年m月d日 H:i:s");
-    
+
+
     // 書き込むデータ作成
     if(!empty($_POST["u_name"])) {
         $u_name = $_POST["u_name"];
@@ -28,14 +46,11 @@ if( $file_handle = fopen(FILENAME, "a")) {
     fclose( $file_handle );
 }
 
-session_start();
 if(!empty($_POST["u_name"])) {
     $_SESSION["u_name"] = $_POST["u_name"];
 }else{
-    $_SESSION["u_name"] = "NO NAME";
+    $_SESSION["u_name"] = "";
 }
-$_SESSION["u_text"] = $_POST["u_text"];
-$_SESSION["sub_time"] = date("Y年m月d日 H:i:s");
 
 
 
